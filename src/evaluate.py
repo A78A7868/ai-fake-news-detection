@@ -148,3 +148,100 @@ def bootstrap_accuracy_ci(y_true, y_pred, n_bootstraps: int = 1000, alpha: float
     upper = boot_accuracies[int(n_bootstraps * (1.0 - alpha / 2))]
     
     return float(lower), float(upper)
+
+
+def kfold_cv_evaluation(models: dict, X, y, cv=5) -> dict:
+    """
+    Perform Stratified K-Fold cross-validation on the full dataset.
+    """
+    from sklearn.model_selection import cross_val_score
+    results = {}
+    for name, model in models.items():
+        print(f"Running stratified {cv}-fold CV for {name}...", flush=True)
+        # Using n_jobs=1 to avoid multiprocessing deadlocks on macOS sparse matrices
+        scores = cross_val_score(model, X, y, cv=cv, scoring="accuracy", n_jobs=1)
+        results[name] = [float(s) for s in scores]
+        print(f"  {name} CV Accuracy: {np.mean(scores)*100:.2f}% ± {np.std(scores)*100:.2f}%", flush=True)
+    return results
+
+
+def plot_learning_curves(models: dict, X, y, cv=5, out_dir=FIGURES_DIR) -> None:
+    """
+    Generate and save learning curves for all models in a 2x2 subplot grid.
+    """
+    from sklearn.model_selection import learning_curve
+    out = Path(out_dir)
+    out.mkdir(parents=True, exist_ok=True)
+
+    fig, axes = plt.subplots(2, 2, figsize=(12, 10))
+    axes = axes.ravel()
+    train_sizes = np.linspace(0.2, 1.0, 5)
+
+    for idx, (name, model) in enumerate(models.items()):
+        print(f"Computing learning curve for {name}...", flush=True)
+        train_sizes_abs, train_scores, test_scores = learning_curve(
+            model, X, y, cv=cv, train_sizes=train_sizes, scoring="accuracy", n_jobs=1, random_state=42
+        )
+        
+        train_scores_mean = np.mean(train_scores, axis=1)
+        train_scores_std = np.std(train_scores, axis=1)
+        test_scores_mean = np.mean(test_scores, axis=1)
+        test_scores_std = np.std(test_scores, axis=1)
+
+        ax = axes[idx]
+        ax.fill_between(train_sizes_abs, train_scores_mean - train_scores_std,
+                         train_scores_mean + train_scores_std, alpha=0.1, color="r")
+        ax.fill_between(train_sizes_abs, test_scores_mean - test_scores_std,
+                         test_scores_mean + test_scores_std, alpha=0.1, color="g")
+        ax.plot(train_sizes_abs, train_scores_mean, 'o-', color="r", label="Training score")
+        ax.plot(train_sizes_abs, test_scores_mean, 'o-', color="g", label="Cross-validation score")
+        
+        ax.set_title(f"Learning Curve: {name}")
+        ax.set_xlabel("Training examples")
+        ax.set_ylabel("Accuracy")
+        ax.legend(loc="best")
+        ax.grid(True)
+
+    plt.tight_layout()
+    path = out / "learning_curves.png"
+    fig.savefig(path, dpi=150)
+    plt.close(fig)
+    print(f"Saved learning curves plot to {path}", flush=True)
+
+
+def plot_roc_curves(models: dict, X_test, y_test, out_dir=FIGURES_DIR) -> None:
+    """
+    Generate and save ROC curves for all models on the test set.
+    """
+    from sklearn.metrics import roc_curve, roc_auc_score
+    out = Path(out_dir)
+    out.mkdir(parents=True, exist_ok=True)
+
+    fig, ax = plt.subplots(figsize=(8, 6))
+
+    for name, model in models.items():
+        print(f"Computing ROC curve for {name}...", flush=True)
+        if hasattr(model, "predict_proba"):
+            y_probs = model.predict_proba(X_test)[:, 1]
+        elif hasattr(model, "decision_function"):
+            y_probs = model.decision_function(X_test)
+        else:
+            raise AttributeError(f"Model {name} does not support probability estimates or decision function.")
+
+        fpr, tpr, _ = roc_curve(y_test, y_probs)
+        auc_score = roc_auc_score(y_test, y_probs)
+        ax.plot(fpr, tpr, label=f"{name} (AUC = {auc_score:.4f})")
+
+    ax.plot([0, 1], [0, 1], 'k--', label="Random Guess (AUC = 0.50)")
+    ax.set_xlabel("False Positive Rate")
+    ax.set_ylabel("True Positive Rate")
+    ax.set_title("Receiver Operating Characteristic (ROC) Curves")
+    ax.legend(loc="lower right")
+    ax.grid(True)
+
+    plt.tight_layout()
+    path = out / "roc_curves.png"
+    fig.savefig(path, dpi=150)
+    plt.close(fig)
+    print(f"Saved ROC curves plot to {path}", flush=True)
+

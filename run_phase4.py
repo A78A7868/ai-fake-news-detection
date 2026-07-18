@@ -28,7 +28,10 @@ from src.evaluate import (
     plot_confusion_matrix,
     plot_metrics_comparison,
     mcnemar_test,
-    bootstrap_accuracy_ci
+    bootstrap_accuracy_ci,
+    kfold_cv_evaluation,
+    plot_learning_curves,
+    plot_roc_curves
 )
 
 ensure_dirs("data/processed", "results/figures", "results/metrics")
@@ -195,5 +198,40 @@ if ood_path.exists():
     joblib.dump(ood_results, "results/metrics/out_of_domain_metrics.joblib")
 else:
     print("Warning: Out-of-domain test file not found at data/raw/recent_news_2023.csv")
+
+# ── 6. Advanced Validation: K-Fold CV, Learning Curves, ROC/AUC ──────────────
+print("\n=== Advanced Validation Processes ===")
+
+# Load the final tuned / best model instances
+final_models = {
+    "KNN": load_model("KNN"),
+    "LogReg": joblib.load("results/LogReg_tuned.joblib") if Path("results/LogReg_tuned.joblib").exists() else load_model("LogReg"),
+    "RandomForest": joblib.load("results/RandomForest_tuned.joblib") if Path("results/RandomForest_tuned.joblib").exists() else load_model("RandomForest"),
+    "NeuralNet": load_model("NeuralNet")
+}
+
+# Construct full dataset for K-Fold CV and Learning Curves
+import scipy.sparse as sp
+import json
+X_train_path = Path("data/processed/X_train_tfidf.joblib")
+y_train_path = Path("data/processed/y_train.joblib")
+X_train = joblib.load(X_train_path)
+y_train = joblib.load(y_train_path)
+
+X_full = sp.vstack([X_train, X_test])
+y_train_arr = y_train.to_numpy() if hasattr(y_train, "to_numpy") else np.array(y_train)
+y_test_arr = y_test.to_numpy() if hasattr(y_test, "to_numpy") else np.array(y_test)
+y_full = np.concatenate([y_train_arr, y_test_arr])
+
+# 6.1 Stratified 5-Fold Cross-Validation
+cv_scores = kfold_cv_evaluation(final_models, X_full, y_full, cv=5)
+with open("results/metrics/kfold_cv_results.json", "w") as f:
+    json.dump(cv_scores, f, indent=2)
+
+# 6.2 Learning Curves
+plot_learning_curves(final_models, X_full, y_full, cv=5)
+
+# 6.3 ROC/AUC Curves (evaluated on test set)
+plot_roc_curves(final_models, X_test, y_test)
 
 print("\nEvaluation metrics, plots, and significance tests saved successfully.")
