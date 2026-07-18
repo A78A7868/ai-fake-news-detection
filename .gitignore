@@ -1,0 +1,51 @@
+# --- Python ---
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# --- Virtual environments ---
+venv/
+env/
+.venv/
+
+# --- Jupyter ---
+.ipynb_checkpoints/
+
+# --- macOS ---
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# --- Raw datasets (too large for git) ---
+data/raw/Fake.csv
+data/raw/True.csv
+
+# --- Processed data and feature matrices ---
+data/processed/
+
+# --- Trained models & serialized objects ---
+results/**/*.joblib
+results/**/*.pkl
+
+# --- LaTeX build artifacts ---
+docs/*.aux
+docs/*.log
+docs/*.out
+docs/*.bbl
+docs/*.blg
+docs/*.fdb_latexmk
+docs/*.fls
+docs/*.synctex.gz
+docs/missfont.log
+
+# --- IDE ---
+.vscode/
+.idea/
+
+# --- Scratch / tuning scripts ---
+scratch/

@@ -1,0 +1,34 @@
+[
+  {
+    "model": "KNN",
+    "accuracy": 0.8829,
+    "precision": 0.8515,
+    "recall": 0.9495,
+    "f1": 0.8978,
+    "inference_time_s": 6.5467
+  },
+  {
+    "model": "LogReg",
+    "accuracy": 0.9824,
+    "precision": 0.9783,
+    "recall": 0.9894,
+    "f1": 0.9838,
+    "inference_time_s": 0.0025
+  },
+  {
+    "model": "RandomForest",
+    "accuracy": 0.9836,
+    "precision": 0.9795,
+    "recall": 0.9906,
+    "f1": 0.985,
+    "inference_time_s": 0.1616
+  },
+  {
+    "model": "NeuralNet",
+    "accuracy": 0.9841,
+    "precision": 0.9817,
+    "recall": 0.9891,
+    "f1": 0.9854,
+    "inference_time_s": 0.0253
+  }
+]
