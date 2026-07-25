@@ -447,6 +447,6 @@ def plot_metrics_comparison(metrics_list: list[dict], out_dir: str | Path = FIGU
 ---
 
 ## 8. References
-1. Bisaillon, C. (2020), "Fake and Real News Dataset," Kaggle. [Online]. Available: https://www.kaggle.com/datasets/clmentbisaillon/fake-and-real-news-dataset
+1. C. Bisaillon, "Fake and Real News Dataset," Kaggle, 2020. [Online]. Available: https://www.kaggle.com/datasets/clmentbisaillon/fake-and-real-news-dataset
 2. H. Ahmed, I. Traore, and S. Saad, "Detecting opinion spams and fake news using text classification," Journal of Security and Privacy, vol. 1, no. 1, p. e9, 2018.
 3. F. Pedregosa et al., "Scikit-learn: Machine Learning in Python," Journal of Machine Learning Research, vol. 12, pp. 2825-2830, 2011.
