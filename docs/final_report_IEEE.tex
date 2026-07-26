@@ -243,12 +243,12 @@ I would also like to extend my heartfelt appreciation to all the faculty members
 
 Finally, I express my sincere gratitude to \textbf{Symbiosis Skills and Professional University (SSPU), Pune}, for providing me with a strong academic foundation and continuous encouragement to pursue practical learning opportunities. The knowledge, experience, and confidence gained during this internship have significantly contributed to my academic and professional development and will serve as a strong foundation for my future career in Artificial Intelligence, Machine Learning, and Cybersecurity.
 
-\section*{Appendix}
+\appendices
 
-\subsection{Project Implementation and Notebooks}
+\section{Project Implementation and Notebooks}
 The four Jupyter notebooks (\texttt{week1\_data\_eda.ipynb} through \texttt{week4\_evaluation.ipynb}) are submitted alongside this report as the complete executable implementation of the machine learning pipeline. The preprocessing logic is implemented in \texttt{src/preprocessing.py}, vectorization wrappers are located in \texttt{src/features.py}, and modeling scripts are in \texttt{src/models.py}. The execution notebooks are stored under the \texttt{notebooks/} directory.
 
-\subsection{Sample Test Data}
+\section{Sample Test Data}
 Table~\ref{tab:test_samples} shows three actual sample articles drawn from the stratified test partition, illustrating their raw content, manually preprocessed token sequences, true labels, and predictions.
 
 \begin{table*}[htbp]
@@ -270,7 +270,7 @@ Table~\ref{tab:test_samples} shows three actual sample articles drawn from the s
 \end{center}
 \end{table*}
 
-\subsection{Code Reference: preprocessing.py}
+\section{Code Reference: preprocessing.py}
 \begin{lstlisting}[language=Python]
 """
 preprocessing.py - text cleaning and manual tokenization for the fake-news pipeline.
@@ -359,7 +359,7 @@ def build_corpus(df: pd.DataFrame, text_col: str = "text") -> pd.Series:
 
 \end{lstlisting}
 
-\subsection{features.py}
+\section{features.py}
 \begin{lstlisting}[language=Python]
 """
 features.py - Bag-of-Words and TF-IDF vectorization using scikit-learn.
@@ -430,7 +430,7 @@ def top_features(vectorizer, X, n: int = 20) -> list[str]:
 
 \end{lstlisting}
 
-\subsection{models.py}
+\section{models.py}
 \begin{lstlisting}[language=Python]
 """
 models.py - training wrappers for all four classifiers.
@@ -538,7 +538,7 @@ def tune_hyperparameters(X_train, y_train) -> dict:
 
 \end{lstlisting}
 
-\subsection{evaluate.py}
+\section{evaluate.py}
 \begin{lstlisting}[language=Python]
 """
 evaluate.py - metrics, confusion matrices, and comparison plots.
@@ -690,6 +690,47 @@ def bootstrap_accuracy_ci(y_true, y_pred, n_bootstraps: int = 1000, alpha: float
     upper = boot_accuracies[int(n_bootstraps * (1.0 - alpha / 2))]
     
     return float(lower), float(upper)
+
+\end{lstlisting}
+
+\section{utils.py}
+\begin{lstlisting}[language=Python]
+"""
+utils.py - shared helpers used across the pipeline.
+"""
+
+import sys
+from pathlib import Path
+
+
+def check_raw_data(raw_dir: str | Path = "data/raw") -> tuple[Path, Path]:
+    """
+    Verify Fake.csv and True.csv exist in raw_dir.
+    Exits with a friendly message if either is missing.
+    """
+    raw = Path(raw_dir)
+    fake_path = raw / "Fake.csv"
+    true_path = raw / "True.csv"
+
+    missing = []
+    if not fake_path.exists():
+        missing.append(str(fake_path))
+    if not true_path.exists():
+        missing.append(str(true_path))
+
+    if missing:
+        print("\n[ERROR] The following required data files are missing:")
+        for p in missing:
+            print(f"  - {p}")
+        sys.exit(1)
+
+    return fake_path, true_path
+
+
+def ensure_dirs(*dirs: str | Path) -> None:
+    """Create directories if they don't exist."""
+    for d in dirs:
+        Path(d).mkdir(parents=True, exist_ok=True)
 
 \end{lstlisting}
 
