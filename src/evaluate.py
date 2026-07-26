@@ -55,6 +55,7 @@ def plot_confusion_matrix(y_true, y_pred, model_name: str, out_dir: str | Path =
     fig, ax = plt.subplots(figsize=(5, 4))
     disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=["Fake", "Real"])
     disp.plot(ax=ax, colorbar=False, cmap="Blues")
+    ax.grid(False)
     ax.set_title(f"Confusion Matrix - {model_name}")
     plt.tight_layout()
 
