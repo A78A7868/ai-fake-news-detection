@@ -125,12 +125,19 @@ We implemented a strict regex-based dateline removal process using the pattern `
 
 ---
 
-## 6. Conclusion
-We built a machine learning pipeline from scratch to classify fake news. Manual tokenization and cleaning proved effective. Our evaluations show that the MLP Neural Network achieves the highest baseline accuracy of 98.41%, while Random Forest performs similarly with 98.36% accuracy. Logistic Regression provides an exceptionally strong alternative, yielding 98.24% baseline accuracy (98.62% when tuned) with exceptionally low inference latency (0.0025s). Future work will focus on removing source-specific tags to prevent leakage, utilizing dense word embeddings or transformer-based representations (e.g., BERT) as alternatives to bag-of-words or TF-IDF features, and evaluating model generalization capabilities on more recent and topically diverse news corpora.
+## 7. Acknowledgement
+
+I would like to express my sincere gratitude to the **Indian Institute of Computer Technology (IICT)** for providing me with the opportunity to undertake this internship and gain valuable practical experience in the fields of Artificial Intelligence, Machine Learning, Natural Language Processing, and Cybersecurity. The internship offered an excellent platform to strengthen my technical skills through hands-on projects, research-oriented learning, and real-world problem solving.
+
+I am especially grateful to **Dr. Ashok Gopalakrishnan** for his exceptional guidance, mentorship, and unwavering support throughout the internship. His vast knowledge, practical teaching approach, and dedication to student learning made a significant impact on my understanding of machine learning concepts and their real-world applications. During the 15-day training program, he patiently addressed the questions and doubts of every student, ensuring that complex topics became easy to understand. His guidance during the implementation of the Titanic Machine Learning Project laid a strong foundation for my learning and greatly enhanced my confidence in applying machine learning techniques. Furthermore, his valuable suggestions and practical insights helped me identify appropriate datasets from Kaggle, enabling me to successfully complete both internship projects with confidence and accuracy.
+
+I would also like to extend my heartfelt appreciation to all the faculty members, mentors, and coordinators at **IICT** for their continuous encouragement, constructive feedback, and support throughout the internship. Their collective efforts created an enriching learning environment that encouraged curiosity, innovation, and independent problem-solving.
+
+Finally, I express my sincere gratitude to **Symbiosis Skills and Professional University (SSPU), Pune**, for providing me with a strong academic foundation and continuous encouragement to pursue practical learning opportunities. The knowledge, experience, and confidence gained during this internship have significantly contributed to my academic and professional development and will serve as a strong foundation for my future career in Artificial Intelligence, Machine Learning, and Cybersecurity.
 
 ---
 
-## 7. Appendix
+## 8. Appendix
 
 ### 7.1 Project Implementation and Notebooks
 The four Jupyter notebooks (`week1_data_eda.ipynb` through `week4_evaluation.ipynb`) are submitted alongside this report as the complete executable implementation of the machine learning pipeline. The preprocessing logic is implemented in `src/preprocessing.py`, vectorization wrappers are located in `src/features.py`, and modeling scripts are in `src/models.py`. The execution notebooks are stored under the `notebooks/` directory.
