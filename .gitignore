@@ -49,3 +49,4 @@ docs/missfont.log
 
 # --- Scratch / tuning scripts ---
 scratch/
+*.zip
