@@ -1,6 +1,6 @@
 # IEEE Conference Paper: AI-Powered Fake News Detection Using Text Classification
 
-*This is the markdown preview of the final IEEE conference report. The compile-ready LaTeX source is located at [`docs/final_report_IEEE.tex`](file:///Users/anandkrishnagrnair/Documents/antigravity/keen-goodall/fake-news-detection/docs/final_report_IEEE.tex).*
+*This is the markdown preview of the final IEEE conference report. The compile-ready LaTeX source is located at [`docs/final_report_IEEE.tex`](docs/final_report_IEEE.tex).*
 
 ---
 
