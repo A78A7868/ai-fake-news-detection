@@ -156,11 +156,16 @@ def kfold_cv_evaluation(models: dict, X, y, cv=5) -> dict:
     Perform Stratified K-Fold cross-validation on the full dataset.
     """
     from sklearn.model_selection import cross_val_score
+    from src.models import get_models
+    fresh_dict = get_models()
     results = {}
-    for name, model in models.items():
+    for name in models.keys():
         print(f"Running stratified {cv}-fold CV for {name}...", flush=True)
-        # Using n_jobs=1 to avoid multiprocessing deadlocks on macOS sparse matrices
-        scores = cross_val_score(model, X, y, cv=cv, scoring="accuracy", n_jobs=1)
+        estimator = fresh_dict.get(name)
+        if estimator is None:
+            params = getattr(models[name], "get_params", lambda: {})()
+            estimator = models[name].__class__(**params)
+        scores = cross_val_score(estimator, X, y, cv=cv, scoring="accuracy", n_jobs=1)
         results[name] = [float(s) for s in scores]
         print(f"  {name} CV Accuracy: {np.mean(scores)*100:.2f}% ± {np.std(scores)*100:.2f}%", flush=True)
     return results
@@ -171,17 +176,22 @@ def plot_learning_curves(models: dict, X, y, cv=5, out_dir=FIGURES_DIR) -> None:
     Generate and save learning curves for all models in a 2x2 subplot grid.
     """
     from sklearn.model_selection import learning_curve
+    from src.models import get_models
+    fresh_dict = get_models()
     out = Path(out_dir)
     out.mkdir(parents=True, exist_ok=True)
 
     fig, axes = plt.subplots(2, 2, figsize=(12, 10))
     axes = axes.ravel()
-    train_sizes = np.linspace(0.2, 1.0, 5)
-
+    train_sizes = np.linspace(0.3, 1.0, 3)
     for idx, (name, model) in enumerate(models.items()):
         print(f"Computing learning curve for {name}...", flush=True)
+        estimator = fresh_dict.get(name)
+        if estimator is None:
+            params = getattr(model, "get_params", lambda: {})()
+            estimator = model.__class__(**params)
         train_sizes_abs, train_scores, test_scores = learning_curve(
-            model, X, y, cv=cv, train_sizes=train_sizes, scoring="accuracy", n_jobs=1, random_state=42
+            estimator, X, y, cv=cv, train_sizes=train_sizes, scoring="accuracy", n_jobs=1, random_state=42
         )
         
         train_scores_mean = np.mean(train_scores, axis=1)
